@@ -84,7 +84,22 @@ except ImportError:
 
 # Provide a PEP 3115 compliant mechanism for class creation
 def new_class(name, bases=(), kwds=None, exec_body=None):
-    """Create a class object dynamically using the appropriate metaclass."""
+    """Create a class object dynamically using the appropriate metaclass.
+
+    *name* is the class name and *bases* is a tuple of its base classes.
+    *kwds* is a mapping of the keyword arguments of the class statement,
+    such as 'metaclass'. It is not the class namespace.
+
+    *exec_body* is a callback that populates the class namespace. It is
+    called with the namespace as its only argument and should update the
+    namespace in place.
+
+    For example, new_class('C', (A,), {'metaclass': M},
+    lambda ns: ns.update(x=1)) is equivalent to:
+
+        class C(A, metaclass=M):
+            x = 1
+    """
     resolved_bases = resolve_bases(bases)
     meta, ns, kwds = prepare_class(name, resolved_bases, kwds)
     if exec_body is not None:
